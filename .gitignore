@@ -1,0 +1,29 @@
+# .NET
+WarranTeaApi/bin/
+WarranTeaApi/obj/
+
+# Secrets - DO NOT commit appsettings with keys
+WarranTeaApi/appsettings.json
+WarranTeaApi/appsettings.Development.json
+
+# Node / Nuxt
+WarranTeaFrontEnd/node_modules/
+WarranTeaFrontEnd/.nuxt/
+WarranTeaFrontEnd/.output/
+WarranTeaFrontEnd/dist/
+
+# IDE
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temp
+*.log
+*.tmp
