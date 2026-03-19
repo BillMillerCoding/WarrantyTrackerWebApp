@@ -73,7 +73,7 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-// Apply  migrations, ensure blob container, and seed product warranties on startup
+// Apply  migrat ions, ensure blob container, and seed product warranties on startup
 using (var scope = app.Services.CreateScope())
 try
 {
