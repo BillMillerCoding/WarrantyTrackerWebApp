@@ -1,6 +1,9 @@
 import type { Warranty, WarrantyUpload, OcrResult } from "~/types";
+import { useApiBase } from "~/composables/useApi";
 
-const API = "/api/warranties";
+function api() {
+  return `${useApiBase()}/warranties`;
+}
 
 export async function getWarranties(
   query?: string,
@@ -11,14 +14,16 @@ export async function getWarranties(
   if (query) params.query = query;
   if (brand) params.brand = brand;
   if (status) params.status = status;
-  return await $fetch<Warranty[]>(API, { params });
+  return await $fetch<Warranty[]>(api(), { params, credentials: "include" });
 }
 
 export async function getWarrantyById(
   id: number | string,
 ): Promise<Warranty | undefined> {
   try {
-    return await $fetch<Warranty>(`${API}/${id}`);
+    return await $fetch<Warranty>(`${api()}/${id}`, {
+      credentials: "include",
+    });
   } catch {
     return undefined;
   }
@@ -35,11 +40,15 @@ export async function createWarranty(data: WarrantyUpload): Promise<Warranty> {
   if (data.notes) formData.append("notes", data.notes);
   if (data.productId) formData.append("productId", String(data.productId));
   if (data.file) formData.append("file", data.file);
-  return await $fetch<Warranty>(API, { method: "POST", body: formData });
+  return await $fetch<Warranty>(api(), {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+  });
 }
 
 export async function deleteWarranty(id: number | string): Promise<void> {
-  await $fetch(`${API}/${id}`, { method: "DELETE" });
+  await $fetch(`${api()}/${id}`, { method: "DELETE", credentials: "include" });
 }
 
 export async function searchWarranties(
@@ -52,9 +61,10 @@ export async function searchWarranties(
 export async function scanReceipt(file: File): Promise<OcrResult> {
   const formData = new FormData();
   formData.append("file", file);
-  return await $fetch<OcrResult>("/api/ocr/parse-warranty", {
+  return await $fetch<OcrResult>(`${useApiBase()}/ocr/parse-warranty`, {
     method: "POST",
     body: formData,
+    credentials: "include",
   });
 }
 
@@ -64,16 +74,18 @@ export async function uploadReceipt(
 ): Promise<Warranty> {
   const formData = new FormData();
   formData.append("file", file);
-  return await $fetch<Warranty>(`${API}/${warrantyId}/upload-receipt`, {
+  return await $fetch<Warranty>(`${api()}/${warrantyId}/upload-receipt`, {
     method: "POST",
     body: formData,
+    credentials: "include",
   });
 }
 
 export async function getExtractedText(
   warrantyId: number | string,
 ): Promise<string> {
-  return await $fetch<string>(`${API}/${warrantyId}/extracted-text`, {
+  return await $fetch<string>(`${api()}/${warrantyId}/extracted-text`, {
     responseType: "text",
+    credentials: "include",
   });
 }

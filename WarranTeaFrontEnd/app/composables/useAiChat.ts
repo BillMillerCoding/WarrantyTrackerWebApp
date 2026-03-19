@@ -1,3 +1,5 @@
+import { useApiBase } from "~/composables/useApi";
+
 export interface AiMessage {
   role: "user" | "assistant";
   content: string;
@@ -9,6 +11,7 @@ export interface AiQueryResponse {
 }
 
 export function useAiChat() {
+  const apiBase = useApiBase();
   const messages = ref<AiMessage[]>([]);
   const loading = ref(false);
   const error = ref("");
@@ -26,10 +29,14 @@ export function useAiChat() {
         content: m.content,
       }));
 
-      const response = await $fetch<AiQueryResponse>("/api/ai/warranty-query", {
-        method: "POST",
-        body: { message: userMessage, history },
-      });
+      const response = await $fetch<AiQueryResponse>(
+        `${apiBase}/ai/warranty-query`,
+        {
+          method: "POST",
+          body: { message: userMessage, history },
+          credentials: "include",
+        },
+      );
 
       if (response.success) {
         messages.value.push({ role: "assistant", content: response.message });

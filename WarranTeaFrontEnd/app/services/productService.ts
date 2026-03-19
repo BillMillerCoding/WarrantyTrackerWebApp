@@ -1,4 +1,5 @@
 import type { Product, SearchResult } from "~/types";
+import { useApiBase } from "~/composables/useApi";
 
 interface ApiSearchResult {
   productWarrantyId: number;
@@ -43,9 +44,10 @@ function mapResult(r: ApiSearchResult): Product {
 }
 
 export async function searchProducts(query: string): Promise<SearchResult> {
-  const response = await $fetch<ApiSearchResponse>("/api/products/search", {
-    params: { q: query },
-  });
+  const response = await $fetch<ApiSearchResponse>(
+    `${useApiBase()}/products/search`,
+    { params: { q: query } },
+  );
   return {
     products: response.results.map(mapResult),
     total: response.totalCount,
@@ -54,7 +56,7 @@ export async function searchProducts(query: string): Promise<SearchResult> {
 
 export async function getProductById(id: string): Promise<Product | undefined> {
   try {
-    const r = await $fetch<ApiSearchResult>(`/api/products/${id}`);
+    const r = await $fetch<ApiSearchResult>(`${useApiBase()}/products/${id}`);
     return mapResult(r);
   } catch {
     return undefined;
