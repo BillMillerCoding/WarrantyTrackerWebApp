@@ -2,9 +2,6 @@
 **/bin/
 **/obj/
 
-# Secrets - DO NOT commit appsettings with keys
-WarranTeaApi/appsettings.json
-WarranTeaApi/appsettings.Development.json
 
 # Node / Nuxt
 WarranTeaFrontEnd/node_modules/
