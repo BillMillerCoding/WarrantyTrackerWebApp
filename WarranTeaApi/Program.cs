@@ -75,17 +75,21 @@ var app = builder.Build();
 
 // Apply migrations, ensure blob container, and seed product warranties on startup
 using (var scope = app.Services.CreateScope())
+try
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.MigrateAsync();
+    Console.WriteLine("Database migration completed successfully.");
 
     var blobService = scope.ServiceProvider.GetRequiredService<BlobService>();
     await blobService.EnsureContainerExistsAsync();
+    Console.WriteLine("Blob container ensured.");
 
     var pwService = scope.ServiceProvider.GetRequiredService<ProductWarrantyService>();
 
     var searchService = scope.ServiceProvider.GetRequiredService<SearchService>();
     await searchService.CreateIndexIfNotExistsAsync();
+    Console.WriteLine("Search index ensured.");
 
     // Only seed if the table is empty (first run after migration)
     if (!await db.ProductWarranties.AnyAsync())
@@ -109,6 +113,10 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Product warranties already seeded — skipping.");
     }
 }
+catch (Exception ex)
+{
+    Console.WriteLine($"Startup initialization error: {ex}");
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -127,6 +135,31 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/api/health", async (AppDbContext db) =>
+{
+    var result = new Dictionary<string, string>();
+    try
+    {
+        var canConnect = await db.Database.CanConnectAsync();
+        result["database"] = canConnect ? "connected" : "cannot connect";
+        if (canConnect)
+        {
+            var productCount = await db.Products.CountAsync();
+            var warrantyCount = await db.ProductWarranties.CountAsync();
+            result["products"] = productCount.ToString();
+            result["productWarranties"] = warrantyCount.ToString();
+        }
+    }
+    catch (Exception ex)
+    {
+        result["database"] = $"error: {ex.Message}";
+    }
+    result["connectionString"] = string.IsNullOrEmpty(
+        db.Database.GetConnectionString()) ? "MISSING" : "set (hidden)";
+    return Results.Ok(result);
+});
+
 app.MapStaticAssets();
 app.MapRazorPages()
    .WithStaticAssets();
