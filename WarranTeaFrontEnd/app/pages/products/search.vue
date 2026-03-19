@@ -47,7 +47,7 @@
       </v-row>
 
       <div
-        v-if="searchQuery && products.length === 0"
+        v-if="hasSearched && searchQuery && products.length === 0"
         class="text-center py-12"
       >
         <v-icon color="grey" size="80">mdi-package-variant-remove</v-icon>
@@ -140,6 +140,7 @@ const searchQuery = ref((route.query.q as string) ?? "");
 const products = ref<Product[]>([]);
 const total = ref(0);
 const loading = ref(false);
+const hasSearched = ref(false);
 
 const showDetail = ref(false);
 const selectedProduct = ref<Product | null>(null);
@@ -160,12 +161,14 @@ async function performSearch() {
     total.value = result.total;
   } finally {
     loading.value = false;
+    hasSearched.value = true;
   }
 }
 
 function clearSearch() {
   products.value = [];
   total.value = 0;
+  hasSearched.value = false;
 }
 
 function openProductDetail(product: Product) {

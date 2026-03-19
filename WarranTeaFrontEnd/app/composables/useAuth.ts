@@ -9,11 +9,15 @@ export function useAuth() {
 
   async function fetchUser() {
     try {
-      const user = await $fetch<User & { roles?: string[] }>(
+      const resp = await $fetch.raw<User & { roles?: string[] }>(
         `${apiBase}/auth/me`,
-        { credentials: "include" },
+        { credentials: "include", ignoreResponseError: true },
       );
-      currentUser.value = user;
+      if (resp.ok) {
+        currentUser.value = resp._data!;
+      } else {
+        currentUser.value = null;
+      }
     } catch {
       currentUser.value = null;
     }
