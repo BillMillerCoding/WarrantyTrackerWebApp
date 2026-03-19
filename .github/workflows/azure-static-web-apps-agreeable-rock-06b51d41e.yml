@@ -19,6 +19,9 @@ jobs:
       - name: npm install
         run: npm i
         working-directory: ./WarranTeaFrontEnd
+      - name: Run frontend tests
+        run: npm test
+        working-directory: ./WarranTeaFrontEnd
       - name: generate
         run: npm run generate
         working-directory: ./WarranTeaFrontEnd
