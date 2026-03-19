@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,8 +32,9 @@ public class AuthController : ControllerBase
         if (!result.Succeeded)
             return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
-        return Ok(new { id = user.Id, name = user.Name, email = user.Email });
+        await _signInManager.SignInAsync(user, isPersistent: true);
+        var roles = await _userManager.GetRolesAsync(user);
+        return Ok(new { id = user.Id, name = user.Name, email = user.Email, roles });
     }
 
     [HttpPost("login")]
@@ -45,16 +47,15 @@ public class AuthController : ControllerBase
         if (user == null)
             return Unauthorized(new { message = "Invalid email or password." });
 
-        var result = await _signInManager.CheckPasswordSignInAsync(user, dto.Password, lockoutOnFailure: false);
+        var result = await _signInManager.PasswordSignInAsync(user, dto.Password, isPersistent: true, lockoutOnFailure: false);
         if (!result.Succeeded)
             return Unauthorized(new { message = "Invalid email or password." });
 
-        await _signInManager.SignInAsync(user, isPersistent: false);
-        return Ok(new { id = user.Id, name = user.Name, email = user.Email });
+        var roles = await _userManager.GetRolesAsync(user);
+        return Ok(new { id = user.Id, name = user.Name, email = user.Email, roles });
     }
 
     [HttpPost("logout")]
-    [Authorize]
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
@@ -65,10 +66,13 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Me()
     {
-        var user = await _userManager.GetUserAsync(User);
-        if (user == null)
-            return Unauthorized();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null) return Unauthorized();
 
-        return Ok(new { id = user.Id, name = user.Name, email = user.Email });
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Unauthorized();
+
+        var roles = await _userManager.GetRolesAsync(user);
+        return Ok(new { id = user.Id, name = user.Name, email = user.Email, roles });
     }
 }

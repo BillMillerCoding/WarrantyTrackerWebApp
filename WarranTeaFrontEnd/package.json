@@ -7,7 +7,9 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -17,5 +19,10 @@
     "vue-router": "^4.6.4",
     "vuetify": "^3.12.2",
     "vuetify-nuxt-module": "^1.0.0-alpha.3"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^20.8.4",
+    "vitest": "^4.1.0"
   }
 }

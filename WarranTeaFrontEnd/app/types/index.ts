@@ -2,6 +2,23 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  roles?: string[];
+}
+
+export interface ProductWarranty {
+  id: number;
+  productId: number;
+  coverageType: string;
+  durationMonths: number;
+  provider: string;
+  description?: string | null;
+  url?: string | null;
+  product?: {
+    id: number;
+    name: string;
+    brand: string;
+    category: string;
+  };
 }
 
 export interface Warranty {

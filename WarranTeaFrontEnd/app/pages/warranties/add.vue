@@ -39,6 +39,25 @@
       {{ scanError }}
     </v-alert>
 
+    <!-- Extracted Text Display -->
+    <v-card v-if="extractedText" class="mb-4" elevation="2" rounded="xl">
+      <v-card-title class="text-subtitle-1">
+        <v-icon class="mr-1" size="small">mdi-text-recognition</v-icon>
+        Extracted Text
+      </v-card-title>
+      <v-card-text>
+        <v-textarea
+          v-model="extractedText"
+          auto-grow
+          readonly
+          rows="4"
+          variant="outlined"
+          hint="Review the text extracted from your image. Use it to fill in the form below."
+          persistent-hint
+        />
+      </v-card-text>
+    </v-card>
+
     <!-- Warranty Details Form -->
     <v-card elevation="2" rounded="xl" class="pa-6">
       <v-card-title class="text-h6 mb-4 px-0">Warranty Details</v-card-title>
@@ -163,6 +182,7 @@ const uploadedFile = ref<File | null>(null);
 const scanning = ref(false);
 const scanComplete = ref(false);
 const scanError = ref("");
+const extractedText = ref("");
 
 const form = reactive<WarrantyUpload>({
   productName: "",
@@ -190,11 +210,15 @@ function onFileSelected(file: File) {
   uploadedFile.value = file;
   scanComplete.value = false;
   scanError.value = "";
+  extractedText.value = "";
 
   // Run OCR to pre-fill form fields
   scanning.value = true;
   scanReceipt(file)
     .then((result) => {
+      // Always show the raw extracted text for user review
+      extractedText.value = result.rawText ?? "";
+
       if (result.productName && !form.productName)
         form.productName = result.productName;
       if (result.brand && !form.brand) form.brand = result.brand;
@@ -223,6 +247,7 @@ function onFileCleared() {
   scanning.value = false;
   scanComplete.value = false;
   scanError.value = "";
+  extractedText.value = "";
 }
 
 async function handleSubmit() {
@@ -254,5 +279,6 @@ function addAnother() {
   uploadedFile.value = null;
   scanComplete.value = false;
   scanError.value = "";
+  extractedText.value = "";
 }
 </script>

@@ -107,6 +107,22 @@
           to="/products/search"
           value="products"
         />
+        <v-list-item
+          prepend-icon="mdi-robot"
+          title="AI Assistant"
+          to="/ai"
+          value="ai"
+        />
+
+        <v-divider v-if="isAdmin" class="my-2" />
+
+        <v-list-item
+          v-if="isAdmin"
+          prepend-icon="mdi-shield-crown"
+          title="Manage Warranties"
+          to="/admin/product-warranties"
+          value="admin-pw"
+        />
       </v-list>
 
       <template #append>
@@ -128,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-const { currentUser, isAuthenticated, logout } = useAuth();
+const { currentUser, isAuthenticated, isAdmin, logout } = useAuth();
 
 const drawer = ref(true);
 const rail = ref(false);

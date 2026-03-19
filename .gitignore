@@ -1,6 +1,6 @@
 # .NET
-WarranTeaApi/bin/
-WarranTeaApi/obj/
+**/bin/
+**/obj/
 
 # Secrets - DO NOT commit appsettings with keys
 WarranTeaApi/appsettings.json

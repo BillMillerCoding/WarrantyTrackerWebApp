@@ -34,7 +34,7 @@ public class SearchService
     /// <summary>
     /// Create the search index only if it does not already exist.
     /// </summary>
-    public async Task CreateIndexIfNotExistsAsync()
+    public virtual async Task CreateIndexIfNotExistsAsync()
     {
         try
         {
@@ -112,7 +112,7 @@ public class SearchService
     /// <summary>
     /// Index a single ProductWarranty document (with its parent Product data) into the search index.
     /// </summary>
-    public async Task IndexDocumentAsync(ProductWarranty pw)
+    public virtual async Task IndexDocumentAsync(ProductWarranty pw)
     {
         var textToEmbed = $"{pw.Product.Name} {pw.Product.Brand} {pw.Product.Category} {pw.CoverageType} {pw.Provider} {pw.Description}";
         var vector = await _embeddingService.EmbedTextAsync(textToEmbed);
@@ -141,7 +141,7 @@ public class SearchService
     /// <summary>
     /// Index multiple ProductWarranty documents in a single batch.
     /// </summary>
-    public async Task IndexDocumentsAsync(IEnumerable<ProductWarranty> warranties)
+    public virtual async Task IndexDocumentsAsync(IEnumerable<ProductWarranty> warranties)
     {
         var docs = new List<SearchDocument>();
 
@@ -175,7 +175,7 @@ public class SearchService
     /// <summary>
     /// Remove a document from the search index by ProductWarranty ID.
     /// </summary>
-    public async Task DeleteDocumentAsync(int productWarrantyId)
+    public virtual async Task DeleteDocumentAsync(int productWarrantyId)
     {
         var batch = IndexDocumentsBatch.Delete("id", new[] { productWarrantyId.ToString() });
         await _searchClient.IndexDocumentsAsync(batch);
@@ -184,7 +184,7 @@ public class SearchService
     /// <summary>
     /// Perform a hybrid search (text + vector) with semantic ranking.
     /// </summary>
-    public async Task<ProductWarrantySearchResponseDto> SearchAsync(string query, string? brandFilter = null, string? categoryFilter = null, int top = 10)
+    public virtual async Task<ProductWarrantySearchResponseDto> SearchAsync(string query, string? brandFilter = null, string? categoryFilter = null, int top = 10)
     {
         var queryVector = await _embeddingService.EmbedTextAsync(query);
 

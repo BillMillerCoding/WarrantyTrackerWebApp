@@ -7,7 +7,7 @@ export function useAuth() {
 
   async function fetchUser() {
     try {
-      const user = await $fetch<User>("/api/auth/me");
+      const user = await $fetch<User & { roles?: string[] }>("/api/auth/me");
       currentUser.value = user;
     } catch {
       currentUser.value = null;
@@ -16,20 +16,33 @@ export function useAuth() {
   }
 
   async function login(email: string, password: string) {
-    const user = await $fetch<User>("/api/auth/login", {
+    const resp = await $fetch<User & { roles?: string[] }>("/api/auth/login", {
       method: "POST",
       body: { email, password },
     });
-    currentUser.value = user;
+    currentUser.value = {
+      id: resp.id,
+      name: resp.name,
+      email: resp.email,
+      roles: resp.roles,
+    };
     initialized.value = true;
   }
 
   async function register(name: string, email: string, password: string) {
-    const user = await $fetch<User>("/api/auth/register", {
-      method: "POST",
-      body: { name, email, password },
-    });
-    currentUser.value = user;
+    const resp = await $fetch<User & { roles?: string[] }>(
+      "/api/auth/register",
+      {
+        method: "POST",
+        body: { name, email, password },
+      },
+    );
+    currentUser.value = {
+      id: resp.id,
+      name: resp.name,
+      email: resp.email,
+      roles: resp.roles,
+    };
     initialized.value = true;
   }
 
@@ -43,9 +56,14 @@ export function useAuth() {
     navigateTo("/");
   }
 
+  const isAdmin = computed(
+    () => currentUser.value?.roles?.includes("Admin") ?? false,
+  );
+
   return {
     currentUser,
     isAuthenticated,
+    isAdmin,
     initialized,
     fetchUser,
     login,

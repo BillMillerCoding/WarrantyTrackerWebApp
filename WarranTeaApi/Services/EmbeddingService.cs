@@ -50,7 +50,7 @@ public class EmbeddingService
     /// <summary>
     /// Generate a vector embedding from text using Azure AI Vision multimodal embeddings.
     /// </summary>
-    public async Task<float[]> EmbedTextAsync(string text)
+    public virtual async Task<float[]> EmbedTextAsync(string text)
     {
         var url = $"{_endpoint}/computervision/retrieval:vectorizeText?api-version={ApiVersion}&model-version=2023-04-15";
         var payload = JsonSerializer.Serialize(new { text });
@@ -72,7 +72,7 @@ public class EmbeddingService
     /// <summary>
     /// Generate a vector embedding from an image stream using Azure AI Vision multimodal embeddings.
     /// </summary>
-    public async Task<float[]> EmbedImageAsync(Stream imageStream, string contentType = "application/octet-stream")
+    public virtual async Task<float[]> EmbedImageAsync(Stream imageStream, string contentType = "application/octet-stream")
     {
         var url = $"{_endpoint}/computervision/retrieval:vectorizeImage?api-version={ApiVersion}&model-version=2023-04-15";
         var imageBytes = await ReadStreamBytesAsync(imageStream);
@@ -96,7 +96,7 @@ public class EmbeddingService
     /// <summary>
     /// Generate a vector embedding from an image at a public URL using Azure AI Vision multimodal embeddings.
     /// </summary>
-    public async Task<float[]> EmbedImageUrlAsync(string imageUrl)
+    public virtual async Task<float[]> EmbedImageUrlAsync(string imageUrl)
     {
         var url = $"{_endpoint}/computervision/retrieval:vectorizeImage?api-version={ApiVersion}&model-version=2023-04-15";
         var payload = JsonSerializer.Serialize(new { url = imageUrl });
@@ -118,7 +118,7 @@ public class EmbeddingService
     /// <summary>
     /// Extract text from an image using Azure AI Vision Read (OCR) API.
     /// </summary>
-    public async Task<string> ExtractTextAsync(Stream imageStream, string contentType = "application/octet-stream")
+    public virtual async Task<string> ExtractTextAsync(Stream imageStream, string contentType = "application/octet-stream")
     {
         var url = $"{_endpoint}/computervision/imageanalysis:analyze?api-version=2024-02-01&features=read";
         var imageBytes = await ReadStreamBytesAsync(imageStream);

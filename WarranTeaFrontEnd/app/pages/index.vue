@@ -13,7 +13,7 @@
               style="max-width: 600px"
             >
               Track, manage, and never miss a warranty claim again. WarranTea
-              keeps all your product warranties in one place.
+              keeps all your product warranties in one place — powered by AI.
             </p>
           </v-col>
         </v-row>
@@ -41,6 +41,7 @@
               </v-img>
 
               <v-btn
+                v-if="!isAuthenticated"
                 block
                 color="secondary"
                 size="x-large"
@@ -50,6 +51,17 @@
               >
                 SIGN UP
               </v-btn>
+              <v-btn
+                v-else
+                block
+                color="secondary"
+                size="x-large"
+                rounded="lg"
+                class="text-h6 font-weight-bold"
+                @click="navigateTo('/dashboard')"
+              >
+                GO TO DASHBOARD
+              </v-btn>
             </v-card>
           </v-col>
         </v-row>
@@ -58,6 +70,16 @@
 
     <!-- Features Section -->
     <v-container class="py-16">
+      <v-row justify="center" class="mb-8">
+        <v-col cols="12" class="text-center">
+          <h2 class="text-h4 font-weight-bold mb-2">Everything You Need</h2>
+          <p class="text-body-1 text-grey-darken-1">
+            From receipt scanning to AI-powered assistance — WarranTea has you
+            covered.
+          </p>
+        </v-col>
+      </v-row>
+
       <v-row justify="center">
         <v-col cols="12" md="5">
           <v-card elevation="2" rounded="xl" height="100%">
@@ -77,10 +99,11 @@
               </template>
             </v-img>
             <v-card-text class="pa-6">
-              <h3 class="text-h5 font-weight-bold mb-2">Upload & Organize</h3>
+              <h3 class="text-h5 font-weight-bold mb-2">Scan &amp; Extract</h3>
               <p class="text-body-1 text-grey-darken-1">
-                Snap a photo of your receipt or warranty card. Our AI extracts
-                the details and organizes everything automatically.
+                Snap a photo of your receipt or warranty card. Our OCR
+                technology extracts the text and auto-fills warranty details for
+                you.
               </p>
             </v-card-text>
           </v-card>
@@ -92,14 +115,15 @@
               <v-card elevation="2" rounded="xl">
                 <v-card-text class="pa-6">
                   <v-icon class="mb-2" color="primary" size="40"
-                    >mdi-magnify</v-icon
+                    >mdi-robot</v-icon
                   >
                   <h3 class="text-h6 font-weight-bold mb-1">
-                    Smart Product Search
+                    AI Warranty Assistant
                   </h3>
                   <p class="text-body-2 text-grey-darken-1">
-                    Search our database to instantly find warranty information
-                    for thousands of products before you even buy them.
+                    Ask questions about your warranties, get coverage details
+                    explained, and extract warranty info from text — all with
+                    our AI assistant.
                   </p>
                 </v-card-text>
               </v-card>
@@ -108,14 +132,15 @@
               <v-card elevation="2" rounded="xl">
                 <v-card-text class="pa-6">
                   <v-icon class="mb-2" color="warning" size="40"
-                    >mdi-bell-ring</v-icon
+                    >mdi-magnify</v-icon
                   >
                   <h3 class="text-h6 font-weight-bold mb-1">
-                    Expiration Alerts
+                    Smart Product Lookup
                   </h3>
                   <p class="text-body-2 text-grey-darken-1">
-                    Get notified before your warranties expire so you never miss
-                    a claim window. Stay covered, stay protected.
+                    Search our database of product warranties using AI-powered
+                    hybrid search. Find coverage details before you even make a
+                    purchase.
                   </p>
                 </v-card-text>
               </v-card>
@@ -131,7 +156,8 @@
                   </h3>
                   <p class="text-body-2 text-grey-darken-1">
                     No more digging through drawers for receipts. Every
-                    warranty, every product — organized and accessible.
+                    warranty, every product — organized on your dashboard and
+                    searchable.
                   </p>
                 </v-card-text>
               </v-card>
@@ -175,6 +201,8 @@
 definePageMeta({
   layout: "default",
 });
+
+const { isAuthenticated } = useAuth();
 </script>
 
 <style scoped>

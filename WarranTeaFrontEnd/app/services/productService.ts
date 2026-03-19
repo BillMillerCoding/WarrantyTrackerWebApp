@@ -53,5 +53,10 @@ export async function searchProducts(query: string): Promise<SearchResult> {
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
-  return undefined;
+  try {
+    const r = await $fetch<ApiSearchResult>(`/api/products/${id}`);
+    return mapResult(r);
+  } catch {
+    return undefined;
+  }
 }

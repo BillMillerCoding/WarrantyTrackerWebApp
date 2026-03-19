@@ -9,19 +9,19 @@ public class BlobService
 
     public BlobService(IConfiguration configuration)
     {
-        var connectionString = configuration["AzureBlobStorage:ConnectionString"]
-            ?? throw new InvalidOperationException("Missing config: AzureBlobStorage:ConnectionString");
-        var containerName = configuration["AzureBlobStorage:ContainerName"]
-            ?? throw new InvalidOperationException("Missing config: AzureBlobStorage:ContainerName");
+        var connectionString = configuration["AzureBlob:ConnectionString"]
+            ?? throw new InvalidOperationException("Missing config: AzureBlob:ConnectionString");
+        var containerName = configuration["AzureBlob:ContainerName"]
+            ?? throw new InvalidOperationException("Missing config: AzureBlob:ContainerName");
         _containerClient = new BlobContainerClient(connectionString, containerName);
     }
 
-    public async Task EnsureContainerExistsAsync()
+    public virtual async Task EnsureContainerExistsAsync()
     {
         await _containerClient.CreateIfNotExistsAsync();
     }
 
-    public async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType)
+    public virtual async Task<string> UploadAsync(Stream fileStream, string fileName, string contentType)
     {
         var blobName = $"{Guid.NewGuid()}/{fileName}";
         var blobClient = _containerClient.GetBlobClient(blobName);
@@ -31,14 +31,14 @@ public class BlobService
         return blobClient.Uri.ToString();
     }
 
-    public async Task<Stream> DownloadAsync(string blobUrl)
+    public virtual async Task<Stream> DownloadAsync(string blobUrl)
     {
         var blobClient = _containerClient.GetBlobClient(GetBlobNameFromUrl(blobUrl));
         var response = await blobClient.DownloadStreamingAsync();
         return response.Value.Content;
     }
 
-    public async Task DeleteAsync(string blobUrl)
+    public virtual async Task DeleteAsync(string blobUrl)
     {
         var blobClient = _containerClient.GetBlobClient(GetBlobNameFromUrl(blobUrl));
         await blobClient.DeleteIfExistsAsync();
